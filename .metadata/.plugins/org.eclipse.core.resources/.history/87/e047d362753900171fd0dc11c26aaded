@@ -1,0 +1,21 @@
+package test;
+
+import java.util.ArrayList;
+
+public class Feature 
+{
+	int[] area16;//像素整体分布
+	
+	int minx;
+	int maxx;
+	int[] rowfocus=new int[8];//取8个横向焦点数
+	int[] rowtrend=new int[8];//如果所取为两个焦点则记录它们之间的像素点数，以判断增减性
+	ArrayList<Integer> rowareatop= new ArrayList<Integer>();//横向极点容器
+	
+	int miny;
+	int maxy;
+	int[] columnfocus=new int[8];//取8个纵向向焦点数
+	int[] columntrend=new int[8];//如果所取为两个焦点则记录它们之间的像素点数，以判断增减性
+	ArrayList<Integer> columnareatop= new ArrayList<Integer>();//纵向极点容器
+
+}

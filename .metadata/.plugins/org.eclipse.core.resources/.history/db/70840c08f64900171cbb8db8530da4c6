@@ -1,0 +1,36 @@
+package Toolbag;
+
+import java.awt.Graphics;
+
+import javax.swing.JPanel;
+
+public class JPanelTool extends JPanel
+{	
+	public JPanelTool()
+	{
+		new PaintThread().start();
+	}
+	
+	public class PaintThread extends Thread
+	{
+		public void run()
+		{
+			while(true)
+			{
+				repaint();
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+	
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+	}
+
+}

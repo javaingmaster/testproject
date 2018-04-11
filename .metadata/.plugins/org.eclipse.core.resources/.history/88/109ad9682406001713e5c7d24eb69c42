@@ -1,0 +1,86 @@
+package special;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+
+import toolbag.Gameimage;
+
+public class Boss 
+{
+	int x,y;
+	Image bossone;
+	boolean bossonelive;
+	int life;
+	public Boss(){}
+	
+	public Boss(int x, int y,boolean live,String path,int life)
+	{
+		this.x=x;
+		this.y=y;
+		this.bossonelive=live;
+		bossone=Gameimage.getimage(path);
+		this.life=life;
+	}
+	public void drawboss(Graphics g,long time)
+	{	
+      	if(bossonelive)
+		{			
+    		g.drawImage(bossone,(int) x,(int) y, null);
+			move(time);
+		}	
+	}
+	public void move(long time)
+	{
+		if(time>40&&time<60&&(time%2==0))
+		{
+			x+=5;
+		}
+		else if(time>40&&time<60&&(time%2==1))
+		{
+			x-=5;
+		}
+		else{}
+	}
+	public boolean iscollision(ArrayList<Myfire> myfirelist,Boss point,Graphics g,Plane me)//传容器
+	{
+		Myfire myfire;
+		for(int w=0;w<myfirelist.size();w++)                         //画我打出的子弹
+		{				
+		 myfire=myfirelist.get(w);	
+		 if(myfire.isinframe==false){  myfirelist.remove(w);}
+		 else{
+		 myfire.drawmyself(g,me);    }  		
+		}	
+		for(int j=0;j<myfirelist.size();j++)
+		{
+			 myfire=myfirelist.get(j);
+		  boolean isdeletemyfire=myfire.collision().intersects(this.collision());
+		 if(isdeletemyfire&&life>0)
+         {        	
+       	   myfirelist.remove(j);
+       	   life--;
+           if(life==0)
+           {
+        	   this.setLive(false);
+        	   point.setLive(false);
+        	   return false;    	  
+           }
+ 		 }  
+		 
+		}
+		 return true;
+	}
+	public Rectangle collision()
+	{
+		return(new Rectangle((int)x,(int)y,bossone.getWidth(null),bossone.getHeight(null)));
+	}
+	
+	public boolean isLive() {
+		return bossonelive;
+	}
+	public void setLive(boolean live) {
+		this.bossonelive = live;
+	}
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring accessors="true" comment="Delete element from 项目“solar_system”&#x0D;&#x0A;－ 原始项目：“solar_system”&#x0D;&#x0A;－ 原始元素：“无标题.jpg”" description="删除元素" element1="src/images/无标题.jpg" elements="0" flags="589830" id="org.eclipse.jdt.ui.delete" resources="1" stamp="1488454644380" subPackages="false" version="1.0"/>
+</session>

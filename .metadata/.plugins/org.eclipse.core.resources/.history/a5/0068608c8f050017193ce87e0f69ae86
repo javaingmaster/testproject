@@ -1,0 +1,43 @@
+package toolbag;
+
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+public class My_gameframe extends Frame
+{
+	public static final int Gamewidth=500;
+	public static final int Gameheight=750;;
+	public void launchframe()
+	{
+		setSize(Gamewidth, Gameheight);
+		setLocation(450,0);
+		setVisible(true);
+		
+		new PaintThread().start();//启动动画线程
+		addWindowListener(new WindowAdapter()
+		{
+
+			public void windowClosing(WindowEvent arg0) {
+			System.exit(0);
+			}
+			
+		});
+	}
+	public class PaintThread extends Thread
+	{
+		public void run()
+		{
+			while(true)
+			{
+				repaint();
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+}

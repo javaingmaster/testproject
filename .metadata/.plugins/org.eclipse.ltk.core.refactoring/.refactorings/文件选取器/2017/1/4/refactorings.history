@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="将编译单元“文件选取器.JFilechooser.java”重命名为“filechoose.java”&#x0D;&#x0A;－ 原始项目：“文件选取器”&#x0D;&#x0A;－ 原始元素：“文件选取器.JFilechooser.java”&#x0D;&#x0A;－ 重命名的元素：“文件选取器.filechoose.java”" description="重命名编译单元“JFilechooser.java”" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;文件选取器{JFilechooser.java" name="filechoose.java" references="false" stamp="1485231363948" version="1.0"/>
+</session>

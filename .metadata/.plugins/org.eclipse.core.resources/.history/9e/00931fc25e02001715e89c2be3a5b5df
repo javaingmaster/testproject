@@ -1,0 +1,54 @@
+package special;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+
+import toolbag.Gameimage;
+
+public class Boss 
+{
+	double x,y;
+	Image bossone;
+	boolean bossonelive;
+	public Boss(){}
+	
+	public Boss(double x, double y,boolean live,String path)
+	{
+		this.x=x;
+		this.y=y;
+		this.bossonelive=live;
+		bossone=Gameimage.getimage(path);
+	}
+	public void drawboss(Graphics g,long time)
+	{
+		if((time>40)&&(time<65)){
+		if(bossonelive)
+		{			
+    		g.drawImage(bossone,(int) x,(int) y, null);
+			move(time);
+		}
+		}
+	}
+	public void move(long time)
+	{
+		if(time>40&&time<60)
+		{
+			x+=3;
+			x+=5;
+			x-=3;
+			x-=5;
+		}
+	}
+	public Rectangle collision()
+	{
+		return(new Rectangle((int)x,(int)y,bossone.getWidth(null),bossone.getHeight(null)));
+	}
+	
+	public boolean isLive() {
+		return bossonelive;
+	}
+	public void setLive(boolean live) {
+		this.bossonelive = live;
+	}
+}

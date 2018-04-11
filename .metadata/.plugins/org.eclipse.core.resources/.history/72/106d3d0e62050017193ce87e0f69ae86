@@ -1,0 +1,52 @@
+package special;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+public class Myfire extends Bullet
+{
+	boolean isinframe=true;
+	boolean live=true;
+	public Myfire()	{}
+	
+	public Myfire(Plane me,int width,int height)
+	{
+		this.x=me.x;
+		this.y=me.y;
+		this.height=height;
+		this.width=width;
+		this.degree=0;
+		this.speed=5;
+		this.speedincrease=0;
+	}
+	public void drawmyself(Graphics g)
+	{
+		if(live)
+		{
+		if(isinframe){
+			if(y<0)
+			{
+				isinframe=false;
+				
+			}
+		c=g.getColor();
+		g.setColor(Color.green);
+		g.fillOval((int)x+5, (int)y+4, (int)width, (int)height);
+		g.fillOval((int)x+9, (int)y+4, (int)width, (int)height);
+		y-=speed;
+		speed+=speedincrease;
+		g.setColor(c);
+		}
+		}
+	}
+
+	public boolean isLive() {
+		return live;
+	}
+
+	public void setLive(boolean live) {
+		this.live = live;
+	}
+ 
+	
+}

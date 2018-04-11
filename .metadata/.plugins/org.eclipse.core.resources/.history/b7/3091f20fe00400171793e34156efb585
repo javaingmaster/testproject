@@ -1,0 +1,12 @@
+package GUI_tool;
+
+import java.awt.Graphics;
+
+public class Test 
+{
+	public static void main(String args[]) 
+	 { 
+		CreateFrame m=new CreateFrame("shit",700,500,"D://background.jpg",200,300);
+	 } 
+
+}

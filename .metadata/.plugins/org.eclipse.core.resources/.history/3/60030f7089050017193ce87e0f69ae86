@@ -1,0 +1,50 @@
+package special;
+
+import java.awt.Graphics;
+import java.awt.Image;
+
+import toolbag.Gameimage;
+
+public class Enemy extends Plane
+{
+	public Enemy(){}
+	public Enemy(double x,double y,String path,String s)
+	{
+		super();
+		this.x=x;
+		this.y=y;
+		this.plane=Gameimage.getimage(path);
+		name=s;
+		this.live=true;
+	}
+	public void drawmyself(Graphics g)
+	{
+		if(live)
+		{
+			if(name=="point")
+			{
+				Image im=plane.getScaledInstance(15, 15, Image.SCALE_DEFAULT);
+				plane=im;
+			}
+			
+			g.drawImage(plane,(int) x,(int) y, null);
+			//move();
+		}		
+	}
+	/*public void move()
+	{
+		if(left&&x>0){
+			x-=speed;
+		}
+		if(right&&x<490){
+			x+=speed;
+		}
+		if(up&&y>0){
+			y-=speed;
+		}
+		if(down&&y<740){
+			y+=speed;
+		}
+	}*/
+
+}

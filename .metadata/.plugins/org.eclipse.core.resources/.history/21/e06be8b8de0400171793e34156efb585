@@ -1,0 +1,44 @@
+package GUI_tool;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Frame;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import java.awt.*; 
+import javax.swing.*; 
+public class CreateFrame extends JPanel
+{ 
+	 Image background=Toolkit.getDefaultToolkit().getImage("D://background.jpg");;
+
+	//public CreateFrame(){}
+	public CreateFrame() 
+	{ 
+		JFrame jf=new JFrame("sss");
+	    jf.setSize(500,500); 
+	    jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+	    JPanel pl=new JPanel(); 
+	    pl.setOpaque(false); 
+	    jf.setContentPane(pl);    
+        jf.setVisible(true); 	   
+	} 
+	
+     public void paintComponent(Graphics g) 
+	 { 
+	     super.paintComponent(g); 
+	     int imWidth=background.getWidth(this); 
+	     int imHeight=background.getHeight(this);
+	     int FWidth=getWidth(); 
+	     int FHeight=getHeight();
+	     int x=(FWidth-imWidth)/2; 
+	     int y=(FHeight-imHeight)/2;
+	     g.drawImage(background,x,y,null); 
+	 } 
+	
+} 
+

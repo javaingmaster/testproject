@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;SimpleSort.java&apos; to &apos;Java重修篇/src/zty.java.restart&apos;&#x0D;&#x0A;- Original project: &apos;数据工具包&apos;&#x0D;&#x0A;- Destination element: &apos;Java重修篇/src/zty.java.restart&apos;&#x0D;&#x0A;- Original element: &apos;zty.acm.demo.SimpleSort.java&apos;" description="Copy compilation unit" destination="=Java重修篇/src&lt;zty.java.restart" element1="/src&lt;zty.acm.demo{SimpleSort.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1508730678432" units="1" version="1.0"/>
+</session>

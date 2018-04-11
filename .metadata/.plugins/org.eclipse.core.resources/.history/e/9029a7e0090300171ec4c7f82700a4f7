@@ -1,0 +1,17 @@
+package Á´±í;
+
+public class Node 
+{
+	Node previous;
+	Object data;
+	Node next;
+	public Node(){}
+	public Node(Node previous,Object data,Node next)
+	{
+		super();
+		this.previous=previous;
+		this.data=data;
+		this.next=next;
+	}
+	
+}

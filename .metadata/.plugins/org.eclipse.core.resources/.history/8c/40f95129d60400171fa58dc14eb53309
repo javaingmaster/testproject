@@ -1,0 +1,47 @@
+package GUI_tool;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Frame;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+public class CreateFrame extends JFrame
+{
+	ImageIcon background=new ImageIcon("images/background.jpg");
+	public CreateFrame(){}
+	/*public CreateFrame()
+	{
+		
+	}*/
+	public void createframe()
+	{
+		setTitle("sss");
+	        //设置窗体大小
+		setSize(300,500);
+		setLocation(200,300);	
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+	    setBackground(Color.black);
+	        //窗体关闭时结束程序
+	    
+	       //获取内容窗格
+	    Container jf_con = this.getContentPane();
+	        //设置布局管理器
+	    jf_con.setLayout(new BorderLayout());
+ 
+		 
+        JLabel backLabel=new JLabel(background);  
+        backLabel.setSize(background.getIconWidth(), background.getIconHeight());
+        backLabel.setLocation(0, 0); 
+        add(backLabel);
+        setResizable(false);
+        setVisible(true);
+	}
+	public static void main(String[] args)
+	{
+		new CreateFrame().createframe();
+	}
+}

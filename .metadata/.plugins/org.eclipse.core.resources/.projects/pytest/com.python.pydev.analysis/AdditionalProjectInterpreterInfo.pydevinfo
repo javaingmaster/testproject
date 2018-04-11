@@ -1,0 +1,18 @@
+-- VERSION_5
+-- START DISKCACHE_2
+D:\javaworkplace\.metadata\.plugins\org.eclipse.core.resources\.projects\pytest\com.python.pydev.analysis\v2_indexcache
+pythontest.myfile|1521425407273545000|D:\javaworkplace\pytest\pythontest\myfile.py
+-- END DISKCACHE
+-- START DICTIONARY
+2
+1=D:\javaworkplace\pytest\pythontest\myfile.py
+2=pythontest.myfile
+-- END DICTIONARY
+-- START TREE 1
+2
+a|1|a!1^2#1*19@
+b|1|b!1^3#1*19@
+-- END TREE
+-- START TREE 2
+0
+-- END TREE

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/Desktop/飞机大战测试版1.0/飞机大战1.0版本.jar" sourcepath="/air_train"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

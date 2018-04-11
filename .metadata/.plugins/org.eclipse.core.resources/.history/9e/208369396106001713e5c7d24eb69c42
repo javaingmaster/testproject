@@ -1,0 +1,56 @@
+package special;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+
+import toolbag.Gameimage;
+
+public class Paidfire extends Myfire
+{
+	Image paidfireone;
+	public Paidfire(){}
+	
+	public Paidfire(Plane me,String path)
+	{
+		paidfireone=Gameimage.getimage(path);
+		this.x=me.x;
+		this.y=me.y;
+		this.degree=0;
+		this.speed=8;
+		this.speedincrease=2;
+	}
+	public Paidfire(Plane me,int width,int height,String path)
+	{
+		paidfireone=Gameimage.getimage(path);
+		this.x=me.x;
+		this.y=me.y;
+		this.height=height;
+		this.width=width;
+		this.degree=0;
+		this.speed=8;
+		this.speedincrease=2;
+	}
+
+	public void drawmyself(Graphics g,Plane me)
+	{
+		if(me.live)
+		{
+		if(live)
+		{
+		if(isinframe){
+			if(y<0)
+			{
+				isinframe=false;
+				
+			}
+		
+		g.drawImage(paidfireone, (int)x-3,(int)y,null);
+		y-=speed;
+		speed+=speedincrease;
+		g.setColor(c);
+		}
+		}
+		}
+	}
+}

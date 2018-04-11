@@ -1,0 +1,85 @@
+package GUI_tool;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+public class Adddd extends JFrame {
+    private Adddd(){
+
+    }
+
+    //创建界面的方法
+    public JPanel createImage(JPanel panel)
+    {
+        GridBagLayout lay=new GridBagLayout();
+        panel.setBackground(Color.green);//设置jpanel的背景颜色为绿色
+        panel.setLayout(lay);
+        GridBagConstraints c=new GridBagConstraints();//获得此类的对象
+        c.fill=GridBagConstraints.BOTH;
+        c.weightx=1;
+        c.gridx=30;
+        c.gridy=30;
+        c.gridheight=20;
+        c.gridwidth=20;
+        addButton(panel,lay,c,"按钮一");
+        addButton(panel,lay,c,"按钮二");
+        addButton(panel,lay,c,"按钮三");
+        
+        c.weightx=0;
+        c.gridwidth=GridBagConstraints.REMAINDER;//这一行的最后一个按钮
+        addButton(panel,lay,c,"按钮四");
+        c.gridwidth=1;
+        c.gridheight=1;
+        addButton(panel,lay,c,"按钮六");
+        c.gridwidth=GridBagConstraints.REMAINDER;//这一行的最后一个组件
+        c.gridheight=GridBagConstraints.RELATIVE;//这一列的倒数第二个组件
+        c.weighty=1;
+        c.weightx=1;
+        c.gridheight=2;//这个值不是1就行，主要是和按钮六区分开，不然和按钮六一样的高度，按钮六也会填满区域
+        addTextArea(panel,lay,c);
+        c.gridheight=GridBagConstraints.REMAINDER;
+        c.weighty=0;
+        c.gridheight=1;
+        addButton(panel,lay,c,"按钮五");
+        return panel;
+    }
+
+    //添加文本区域
+    private void addTextArea(JPanel panel, GridBagLayout lay, GridBagConstraints c) {
+        JTextArea text=new JTextArea();
+        lay.setConstraints(text, c);
+        panel.add(text);
+    }
+
+    //添加按钮的方法
+    private void addButton(JPanel panel,GridBagLayout lay,GridBagConstraints c,String name){
+        JButton bt=new JButton(name);
+        lay.setConstraints(bt, c);
+        panel.add(bt);
+    }
+
+    //设置窗体属性
+    public void initFrame(){
+        Dimension dim=Toolkit.getDefaultToolkit().getScreenSize();//获取电脑屏幕的高宽值
+        this.setSize((int)(dim.width*0.3), (int)(dim.height*0.7));
+        this.setLocation((int)(dim.width*0.4), 0);
+        this.setVisible(true);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+    	Adddd frame=new Adddd();
+        JPanel panel=new JPanel();
+        frame.add(frame.createImage(panel));
+        frame.initFrame();
+    }
+
+}

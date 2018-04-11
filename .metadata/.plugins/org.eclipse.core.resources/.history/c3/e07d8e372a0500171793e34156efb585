@@ -1,0 +1,23 @@
+package GUI_tool;
+
+import java.awt.Graphics;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+public class Test 
+{
+	public static void main(String args[]) 
+	 { 
+		CreateFrame m=new CreateFrame("shit",700,500,"D://background.jpg",50,50);
+		JFrame now=new JFrame();
+		now=m.getframe();
+		JButton b1=new JButton("s");
+		b1.setBounds(50, 50, 100, 100);
+		//now.add(b1);
+		JLabel b=new JLabel("s");
+		b.setBounds(100, 100, 130, 130);
+		now.add(b);
+	 } 
+}

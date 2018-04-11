@@ -1,0 +1,784 @@
+package test;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGEncodeParam;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
+
+
+public class Test extends JFrame{
+	static BufferedImage img;
+	ImageIcon ic=new ImageIcon();
+	JLabel jl=new JLabel();
+	int[][] gray;
+	//static int[][] pi;
+	static int[][] pixel;
+	static int[] sign;
+	public int index=0;
+	public int maxx_;
+	public int maxy_;
+	public int minx_=1000;
+	public int miny_=1000;
+	public int maxxx_;
+	public int maxyy_;
+	public int minxx_=1000;
+	public int minyy_=1000;
+	public int countarea=0;
+	public  BufferedImage[] sub;
+	public static int width,height,minx,miny;
+	static ArrayList Temp=new ArrayList();
+	static int count;
+	static int num=0;
+	//static int xde=0;
+	Test(){
+		try {
+			img=ImageIO.read(this.getClass().getResource("/images/test1.bmp"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 width = img.getWidth();  
+         height = img.getHeight();  
+         minx = img.getMinX();  
+         miny = img.getMinY();  
+        gray=new int[width][height];
+        sign=new int[width*height];
+		this.setSize(800, 600);
+		this.setLocation(300,300);
+		ic.setImage(img);
+		jl.setIcon(ic);
+		this.add(jl);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		grayscale(img);
+		Binaryzation();
+		To_noise(img);
+		To_noise2(img);
+		separate(img);
+		//rotateImage(img);
+		//crossCutting( img);
+		this.setVisible(true);
+	}
+	
+	
+	public void grayscale(BufferedImage img){
+	/*	
+		
+		int width = img.getWidth();  
+        int height = img.getHeight();  
+        int minx = img.getMinX();  
+        int miny = img.getMinY();  
+        
+        */
+	        int[] rgb=new int[3];
+	        for (int i = minx; i < width; i++) {  
+	            for (int j = miny; j < height; j++) {  
+	                int pixel =img.getRGB(i, j); // 下面三行代码将一个数字转换为RGB数字  
+	                rgb[0] = (pixel & 0xff0000) >> 16;  
+	                rgb[1] = (pixel & 0xff00) >> 8;  
+	                rgb[2] = (pixel & 0xff);  
+	                gray[i][j] = (rgb[0]*19595 + rgb[1]*38469 + rgb[2]*7472) >> 16; //一种灰度化的算法
+	                rgb[0]=gray[i][j]<<16;
+	                rgb[1]=gray[i][j]<<8;
+	                rgb[2]=gray[i][j];
+	                pixel=rgb[0]+rgb[1]+rgb[2];
+	                img.setRGB(i, j, pixel);	             	                
+	            }          
+	   }     
+		
+	}
+	
+	
+public void Binaryzation(){
+		
+		/*
+		
+		int width = img.getWidth();       //自适应阈值算法  
+        int height = img.getHeight();  
+        int minx = img.getMinX();  
+        int miny = img.getMinY();  
+        
+        */
+		int old_threshold=0;
+        int new_threshold=127;
+        int g_threshold=0;    //大于给定阈值的和
+        int l_threshold=0;   //小于给定阈值的和
+        int x,y;  
+        do{
+        	x=0;y=0;  
+        	g_threshold=0;
+        	l_threshold=0;
+        	for (int i = minx; i < width; i++) {  
+        		for (int j = miny; j < height; j++) {  
+        			if(gray[i][j]>=new_threshold){
+        				x++;
+        				g_threshold+=gray[i][j];
+        				
+        			}	
+        			else{
+        				y++;
+        				l_threshold+=gray[i][j];
+        				
+        			}    	
+        		}
+        	}
+        	old_threshold=new_threshold;
+        	new_threshold=(g_threshold/x+l_threshold/y)/2;
+        }while(old_threshold!=new_threshold);
+        for (int i = minx; i < width; i++) {  
+    		for (int j = miny; j < height; j++) {  
+    			if(gray[i][j]>=new_threshold)
+    				img.setRGB(i, j, 0xffffff);
+    			else
+    				img.setRGB(i, j, 0x000000);
+    			
+    		}
+        }
+	}
+
+	
+	public void To_noise(BufferedImage img){
+		
+		/*
+		
+		int width = img.getWidth();       //8连通域算法
+        int height = img.getHeight();  
+        int minx = img.getMinX();  
+        int miny = img.getMinY();  
+        
+        
+        */
+        int n;
+        for(int i=minx;i<width;i++){    //先将图片的边界全部设为白色
+        	img.setRGB(i, miny, 0xffffff);
+        	img.setRGB(i, height-1, 0xffffff);
+        }
+        for(int j=miny;j<height;j++){
+        	img.setRGB(minx, j, 0xffffff);
+        	img.setRGB(width-1, j, 0xffffff);
+        }
+        for (int i = minx+1; i < width-1; i++) {  
+    		for (int j = miny+1; j < height-1; j++) {  
+    			n=0;
+    			for(int a=i-1;a<=i+1;a++){
+    				for(int b=j-1;b<=j+1;b++){	
+    					//System.out.println(0xffffff); 
+    					
+    					if((img.getRGB(a,b) & 0xffffff)==0xffffff)
+    						n++;
+    						
+    				}
+    			}   	
+    			
+    			if(n>=7)
+    				img.setRGB(i, j, 0xffffff);
+    			
+    	} 
+	}
+
+        
+        
+        
+	}
+	
+	public void To_noise2(BufferedImage img){
+        count=0;
+        int n;
+//        int[][] sign=new int[width][height];
+      //  int[][] pixel=new int[width][height];
+         pixel=new int[width][height];
+		for(int i=minx;i<width;i++){     //初始化标记
+			for(int j=miny;j<height;j++){
+				pixel[i][j]=0;
+			}
+			}		
+		for(int i=0;i<width*height;i++){
+			sign[i]=0;		
+		}
+		for(int i=minx;i<width;i++){
+			for(int j=miny;j<height;j++){
+				if(((img.getRGB(i, j) & 0xffffff)==0)&& pixel[i][j]==0){	//遇到黑色像素点而且标记为0				
+					firstDealLabel(img,i,j);
+					
+				//	System.out.println(count);
+				//	System.out.println(i+" "+j);
+					}					
+			}		
+			}
+		findFather(img);
+		/*
+		int[] min_x=new int[width];
+		int[] max_x=new int[width]; 
+		int[] min_y=new int[height];
+		int[] max_y=new int[height];
+		int num=0;
+		*/
+		for(int t=1;t<=count;t++){
+			n=0;
+			for(int i=minx;i<width;i++){
+				for(int j=miny;j<height;j++){
+				//	System.out.println(pixel[i][j]);
+					if(pixel[i][j]==t)
+						n++;
+				}
+			}
+			//if(n!=0)
+			//	System.out.println(n);
+			if(n<(width*height*0.00071)){
+				for(int a=minx;a<width;a++){
+					for(int b=miny;b<height;b++){
+						if(pixel[a][b]==t){
+							img.setRGB(a, b, 0xffffff);
+							pixel[a][b]=0;}
+					}
+				}
+			}/*
+			for(int i=minx;i<width;i++){
+				for(int j=miny;j<height;j++){
+					if(pixel[i][j]==t){
+						if(min_x[num]==0 &&min_y[num]==0 &&max_x[num]==0&&max_y[num]==0)
+							if()
+						min_x[num]=max_x[num]=i;		
+						if(i<min_x[num]){
+							
+						}
+							
+					}
+				}
+			}*/
+		}
+		count=changeLabel();
+		}
+/*	
+	public void dealBwlabe(int i, int j,int count){
+		
+		
+		int width = img.getWidth();       //连通域算法
+        int height = img.getHeight();  
+        int minx = img.getMinX();  
+        int miny = img.getMinY();
+        
+        //上
+        //xde++;
+		
+		if (i>minx && ((img.getRGB(i-1, j) & 0xffffff)==0)  && pi[i-1][j]==0) {
+			pi[i-1][j] = count;
+		
+		//	System.out.println("当前运转次数："+xde);
+            dealBwlabe(i-1, j,count);
+        }
+        
+        //左
+        if (j>miny && ((img.getRGB(i, j-1) & 0xffffff)==0)  && pi[i][j-1]==0) {
+        	pi[i][j-1] = count;
+        	
+            dealBwlabe(i, j-1,count);
+        }
+        
+        //下
+        if (i<width-1 && ((img.getRGB(i+1, j) & 0xffffff)==0)  && pi[i+1][j]==0) {
+        	pi[i+1][j] = count;
+        	
+            dealBwlabe(i+1, j,count);
+        }
+        //右
+        if (j<height-1 && ((img.getRGB(i, j+1) & 0xffffff)==0) && pi[i][j+1]==0) {
+        	pi[i][j+1] = count;
+        	
+            dealBwlabe(i, j+1,count);
+        }        
+	}
+
+    */
+	public void firstDealLabel(BufferedImage img,int i,int j){    //第一次图像扫描
+		
+		  						
+		int temp=0; 						// 像素点四周最小的标记数
+		find(i,j);  				//寻找四周最小标记数的函数
+		if(Temp.size()==0){   					//如果四周没有标记那么给他一个新标记
+			 count++;
+			  pixel[i][j]=count;
+			  Temp.clear();
+		}
+		else{
+			temp=(int)Temp.get(0);       //如果有标记那么找出最小的那个赋值给temp
+		for(int a=1;a<Temp.size();a++){
+			if(temp>(int)Temp.get(a))
+				temp=(int)Temp.get(a);
+			
+		}
+		 label(img,temp);
+		Temp.clear();  		
+		pixel[i][j]=temp;
+		temp=0;	
+	}
+	}
+	public void  find(int i,int j){
+		/*
+		if(pixel[i+1][j]>0){
+			Temp.add(pixel[i+1][j]);						
+		}
+		*/
+		if(pixel[i-1][j]>0){
+			Temp.add(pixel[i-1][j]);			
+			
+		}
+		/*
+		if(pixel[i][j+1]>0){
+			Temp.add(pixel[i][j+1]);
+	
+	    }
+	    */
+		if(pixel[i][j-1]>0){
+			Temp.add(pixel[i][j-1]);
+					
+		}
+		if(pixel[i-1][j-1]>0){
+			Temp.add(pixel[i-1][j-1]);
+		}
+		if(pixel[i-1][j+1]>0){
+			Temp.add(pixel[i-1][j+1]);
+		}
+		
+	}
+	public void secondDealLabel(BufferedImage img,int a,int b){
+		for(int x=minx;x<width;x++){
+			for(int y=miny;y<height;y++){
+				if(pixel[x][y]==b)
+					pixel[x][y]=a;
+			}
+		}
+	}
+	
+	
+	
+	public void findFather(BufferedImage img){
+		int t=0;
+		for(int i=1;i<=count;i++){
+			t=i;
+			while(sign[i]!=0){
+				i=sign[i];
+			}
+			secondDealLabel(img,i,t);
+			i=t;		
+		}			
+	}
+	
+	public void label(BufferedImage img,int temp){
+		for(int i=0;i<Temp.size();i++){
+			if((int)Temp.get(i)!=temp){
+				if(sign[(int)Temp.get(i)]==0)
+				sign[(int)Temp.get(i)]=temp;
+				else if(sign[(int)Temp.get(i)]>temp)
+					sign[(int)Temp.get(i)]=temp;
+		}
+			
+	}
+	}
+	public void separate(BufferedImage img)//不粘连图像分割
+	{			
+		    
+		   sub=new BufferedImage[count];//子图象容器
+		    		System.out.println(count);	    
+     
+		    
+		    
+		    for(int t=1;t<count;t++)
+		    {
+		    
+		    for(int i=minx;i<width;i++){
+				for(int j=miny;j<height;j++){
+				
+					if(pixel[i][j]==t)
+					{
+						Takewindowofarea(i,j);
+					}
+											
+				}
+			}
+			
+			sub[index]=img.getSubimage(minx_, miny_, maxx_-minx_+1, maxy_-miny_+1);
+			To_noisetosub(sub[index]);
+			int newwidth=sub[index].getWidth();
+			int newheight=sub[index].getHeight();
+			File outImageFile=new File("buff.jpg");
+			try {
+				ImageIO.write(sub[index], "jpeg", outImageFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				resizeimg(outImageFile,newwidth,newheight);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			//rotateImage(sub[index]);
+			index++;
+			maxx_=0;
+			maxy_=0;
+			minx_=1000;
+			miny_=1000;		    
+		    }
+		 	    
+			int k=30;
+		    this.setLayout(null);
+		    
+		    
+		    for(int p=0;p<count-1;p++)//   验证不粘连图像分割
+		    {			    	
+		    ImageIcon c=new ImageIcon();
+			JLabel l=new JLabel();
+			c.setImage(sub[p]);
+			l.setIcon(c);
+			this.add(l);
+			l.setBounds(k,50,180,180);
+			System.out.println("ok");
+			k+=150;			
+		    }
+		    		    
+	}
+	
+	public void Takewindowofarea(int i,int j)//提取函数
+    {
+        if(i>=maxx_)
+        {
+            maxx_=i;
+        }	       
+        if(i<=minx_)
+        {
+            minx_=i;
+        }
+        if(j>=maxy_)
+        {
+            maxy_=j;
+        }
+        if(j<=miny_)
+        {
+            miny_=j;
+        }
+    }
+	
+	@SuppressWarnings("restriction")
+	public void resizeimg(File f,int w,int h) throws IOException
+	{
+	    FileOutputStream out = null;
+	    try{
+	            BufferedImage expand = javax.imageio.ImageIO.read(f);  
+	            // 放大边长
+	            BufferedImage expandencode = new BufferedImage(w*2, h*2, BufferedImage.TYPE_INT_RGB);  
+	            //绘制放大后的图片
+	            expandencode.getGraphics().drawImage(expand, 0, 0, w*2, h*2, null);  
+	            out = new FileOutputStream("D://newsubimage.jpg");  
+	            @SuppressWarnings("restriction")
+				JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);  
+	            encoder.encode(expandencode);  
+	    }catch(Exception e){
+	    e.printStackTrace();
+	    }finally{
+	    if(out != null){
+	                out.close();  
+	    }
+	    }
+	    }
+	
+		
+	public void To_noisetosub(BufferedImage img)//子图象噪点处理
+	{
+	        int n;
+	        for(int i=0;i<img.getWidth();i++){    //先将图片的边界全部设为白色
+	        	img.setRGB(i, 0, 0xffffff);
+	        	img.setRGB(i, img.getHeight()-1, 0xffffff);
+	        }
+	        for(int j=0;j<img.getHeight();j++){
+	        	img.setRGB(0, j, 0xffffff);
+	        	img.setRGB(img.getWidth()-1, j, 0xffffff);
+	        }
+	        for (int i =1; i < img.getWidth()-1; i++) {  
+	    		for (int j = 1; j < img.getHeight()-1; j++) {  
+	    			n=0;
+	    			for(int a=i-1;a<=i+1;a++){
+	    				for(int b=j-1;b<=j+1;b++){	 
+	    					
+	    					if((img.getRGB(a,b) & 0xffffff)==0xffffff)
+	    						n++;
+	    						
+	    				}
+	    			}   	
+	    			
+	    			if(n>=5)
+	    				img.setRGB(i, j, 0xffffff);
+	    			
+	    	} 
+		}
+	}
+	
+	public void rotateImage(BufferedImage img)
+    {
+		BufferedImage copy;
+		int angle=5;
+		int newx;
+		int newy ;
+		int min=1000;
+		int bestangle=0;
+		int n;
+		int control=0;
+		
+		int xmiddle=img.getWidth()/2-1;
+		int ymiddle=img.getHeight()/2-1;
+		
+		//int[][] tool=new int[img.getWidth()][img.getHeight()];
+		
+		while(control<10)
+		{
+			copy=img.getSubimage(0, 0, img.getWidth(), img.getHeight());
+
+			
+		int[][] tool=new int[img.getWidth()][img.getHeight()];
+		
+		 for (int i =1; i < img.getWidth()-1; i++) {  
+	    		for (int j = 1; j < img.getHeight()-1; j++) { 
+	    			if((img.getRGB(i, j) & 0xffffff)==0)
+	    			{
+	    				//movex=Math.abs(Math.sqrt((Math.pow(xmiddle-i, 2)+Math.pow(ymiddle-j,2)))*Math.cos(Math.atan(j-ymiddle/i-xmiddle))-i*Math.cos(Math.toRadians(angle))+j*Math.sin(Math.toRadians(angle)));
+	    			    //movey=Math.abs(Math.sqrt((Math.pow(xmiddle-i, 2)+Math.pow(ymiddle-j,2)))*Math.sin(Math.atan(j-ymiddle/i-xmiddle))-i*Math.sin(Math.toRadians(angle))+j*Math.cos(Math.toRadians(angle)));    				  
+	    				newx =(int)( (i - xmiddle+1) * Math.cos(Math.toRadians(angle*1.0)) - (j - ymiddle+1) * Math.sin(Math.toRadians(angle*1.0)) + xmiddle-1);  
+	    		        newy = (int)((i - xmiddle+1) *Math.sin(Math.toRadians(angle*1.0)) + (j - ymiddle+1) * Math.cos(Math.toRadians(angle*1.0))+ ymiddle-1);
+	    				
+	    				if(newx>=0&&newx<=img.getWidth()-1&&newy>=0&&newy<=img.getHeight()-1)
+	    				{
+	    				tool[newx][newy]=1;
+	    				}else
+	    				{
+	    					System.out.println("4象限有坐标经变换后出界.");
+	    					System.out.println("出错横坐标为 newx= "+newx+"出错纵坐标为newy= "+newy);   				}
+	    			}
+	    			
+	    		}
+		 }
+		 for (int i =1; i < img.getWidth()-1; i++) {  
+	    		for (int j = 1; j < img.getHeight()-1; j++) { 
+	    			if(tool[i][j]==1)
+	    			{
+	    				img.setRGB(i, j, 0x00);
+	    			}else
+	    			{
+	    				img.setRGB(i, j, 0xffffff);
+	    			}
+	    			
+	    		}
+		 }
+		 
+		 for (int i = 1; i < img.getWidth()-1; i++) {  
+	    		for (int j = 1; j < img.getHeight()-1; j++) {  
+	    			n=0;
+	    			for(int a=i-1;a<=i+1;a++){
+	    				for(int b=j-1;b<=j+1;b++){		    					
+	    					
+	    					if((img.getRGB(a,b) & 0xffffff)==0)
+	    						n++;
+	    						
+	    				}
+	    			}   	
+	    			
+	    			if(n>=5)
+	    				img.setRGB(i, j, 0x00);	    			
+	    	} 
+		}
+		 for(int i=0;i<img.getWidth();i++){
+				for(int j=0;j<img.getHeight();j++){
+				
+					if((copy.getRGB(i,j) & 0xffffff)==0)
+					{
+						Takewindowofsubarea(i,j);
+					}
+											
+				}
+			}
+			
+			if(maxxx_-minxx_<=min)
+			{
+				min=maxxx_-minxx_;
+				bestangle=angle;
+			}
+			
+	        maxxx_=0;				
+			minxx_=1000;
+			angle--;
+			control++;
+	}
+		System.out.println("the bestangle is: "+bestangle);
+		int[][] tool=new int[img.getWidth()][img.getHeight()];
+		
+		 for (int i =1; i < img.getWidth()-1; i++) {  
+	    		for (int j = 1; j < img.getHeight()-1; j++) { 
+	    			if((img.getRGB(i, j) & 0xffffff)==0)
+	    			{
+	    				newx=(int)(i*Math.cos(Math.toRadians(bestangle))-j*Math.sin(Math.toRadians(bestangle)));
+	    				newy=(int)(i*Math.sin(Math.toRadians(bestangle))+j*Math.cos(Math.toRadians(bestangle)));
+	    				if(newx>=0&&newx<=img.getWidth()-1&&newy>=0&&newy<=img.getHeight()-1)
+	    				{
+	    				tool[newx][newy]=1;
+	    				}else
+	    				{
+	    					System.out.println("最终有坐标经变换后出界.");
+	    				}
+	    			}
+	    			
+	    		}
+		 }
+		 for (int i =1; i < img.getWidth()-1; i++) {  
+	    		for (int j = 1; j < img.getHeight()-1; j++) { 
+	    			if(tool[i][j]==1)
+	    			{
+	    				img.setRGB(i, j, 0x00);
+	    			}else
+	    			{
+	    				img.setRGB(i, j, 0xffffff);
+	    			}
+	    			
+	    		}
+		 }
+		 for (int i = 1; i < img.getWidth()-1; i++) {  
+	    		for (int j = 1; j < img.getHeight()-1; j++) {  
+	    			n=0;
+	    			for(int a=i-1;a<=i+1;a++){
+	    				for(int b=j-1;b<=j+1;b++){		    					
+	    					
+	    					if((img.getRGB(a,b) & 0xffffff)==0)
+	    						n++;
+	    						
+	    				}
+	    			}   	
+	    			
+	    			if(n>=5)
+	    				img.setRGB(i, j, 0x00);	    			
+	    	} 
+		}
+    }
+		 
+		
+		
+  
+	
+	public void Takewindowofsubarea(int i,int j)//提取子图象函数
+    {
+        if(i>=maxxx_)
+        {
+            maxxx_=i;
+        }	       
+        if(i<=minxx_)
+        {
+            minxx_=i;
+        }
+    }
+	
+	
+	
+	
+	
+	public void crossCutting(BufferedImage img){    //横向切割算法
+		int n;      //计算每行中黑色像素的个数
+		int cut_up=0;
+		int cut_down=0;   //切割的位置变量
+		boolean control=false;    //一个判断分行的控制变量
+		for(int i=miny;i<height;i++){
+			n=0;
+			for(int j=minx;j<width;j++){
+				if((img.getRGB(j, i) & 0xfffffff)==0)
+					n++;
+			}
+			if(n>width*0.01){
+					cut_up=i-1;
+					control=true;
+			}
+			if(control==true && n<width*0.01){
+				cut_down=i;
+				oprateImage(img,cut_up,cut_down);
+				control=false;
+			}
+		}
+	}
+	public void oprateImage(BufferedImage img,int y1,int y2){
+		BufferedImage newimg=null;
+		ImageInputStream is = null;  
+		ImageReadParam param=new ImageReadParam();
+		Iterator<ImageReader> it = ImageIO  
+                .getImageReadersByFormatName("bmp");  	
+        ImageReader reader = it.next();  
+        try {
+			is = ImageIO.createImageInputStream(img);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+        reader.setInput(is, true);
+		Rectangle rect = new Rectangle(minx, y1, width, y2);
+		param.setSourceRegion(rect);
+		try {
+			newimg= reader.read(0, param);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("num");
+		try {
+			ImageIO.write(newimg, "bmp", new File("～/Users/xulide/Downloads/test"+num+".jpg"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		num++;
+	}
+	public void lengthwiseCutting(BufferedImage img){  //纵向切割算法
+		
+	}
+	public void getAveragewidth(BufferedImage img){
+		
+		
+	}
+	public int changeLabel(){
+		int num=0;
+		int newlabel=1;
+		for(int t=1;t<=count;t++){
+			for(int i=minx;i<width;i++){
+				for(int j=miny;j<height;j++){
+					if(pixel[i][j]==t)
+					num++;
+				}
+			}
+			if(num!=0){
+				for(int i=minx;i<width;i++){
+				for(int j=miny;j<height;j++){
+					if(pixel[i][j]==t)
+					pixel[i][j]=newlabel;
+			}
+			}
+				num=0;
+			newlabel++;
+		}		
+		}
+		return newlabel;
+	}
+	public static void main(String[] args){
+		new Test();
+	}
+}
+

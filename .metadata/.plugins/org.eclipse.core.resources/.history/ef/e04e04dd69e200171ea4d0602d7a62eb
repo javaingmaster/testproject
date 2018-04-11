@@ -1,0 +1,206 @@
+package Structure.zty;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 模拟Apriori
+ * @author 周廷宇
+ *
+ */
+public class Apriori {
+	public Record[] samples;
+	public int minsup=2;//最小支持度
+	public double minconf=0.6;//最小置信度
+	public List<String> notin;
+	public List<String> subsamples;
+	
+	
+	public Apriori(){
+		this.notin=new ArrayList<String>();
+		this.subsamples=new ArrayList<String>();
+		this.samples=new Record[9];
+		for(int i=0;i<9;i++){
+			samples[i]=new Record();
+		}
+		
+		samples[0].buy=new String[3];
+		samples[0].buy[0]="i1";
+		samples[0].buy[1]="i2";
+		samples[0].buy[2]="i5";
+		samples[1].buy=new String[2];
+		samples[1].buy[0]="i2";
+		samples[1].buy[1]="i4";
+		samples[2].buy=new String[2];
+		samples[2].buy[0]="i2";
+		samples[2].buy[1]="i3";
+		samples[3].buy=new String[3];
+		samples[3].buy[0]="i1";
+		samples[3].buy[1]="i2";
+		samples[3].buy[2]="i4";
+		samples[4].buy=new String[2];
+		samples[4].buy[0]="i1";
+		samples[4].buy[1]="i3";
+		samples[5].buy=new String[2];
+		samples[5].buy[0]="i2";
+		samples[5].buy[1]="i3";
+		samples[6].buy=new String[2];
+		samples[6].buy[0]="i1";
+		samples[6].buy[1]="i3";
+		samples[7].buy=new String[4];
+		samples[7].buy[0]="i1";
+		samples[7].buy[1]="i2";
+		samples[7].buy[2]="i3";
+		samples[7].buy[3]="i5";
+		samples[8].buy=new String[3];
+		samples[8].buy[0]="i1";
+		samples[8].buy[1]="i2";
+		samples[8].buy[2]="i3";
+		
+		/*for(int i=0;i<samples.length;i++){
+			for(int j=0;j<samples[i].buy.length;j++){
+				System.out.print(samples[i].buy[j]+"     ");
+			}
+			System.out.println();
+		}*/
+	}
+	
+	public void doApriori(){
+		for(int index=1;index<getmaxlength();index++){ 
+			
+			if(index==1){
+				for(int i=0;i<samples.length;i++){
+					for(int j=0;j<samples[i].buy.length;j++){
+						if(!this.subsamples.contains(samples[i].buy[j])){
+							this.subsamples.add(samples[i].buy[j]);
+						}
+					}			
+				}
+			}else{
+				this.subsamples=makegroup(index);
+			}
+		
+			this.subsamples.sort(null);
+			
+			outCandidate();
+					
+			outAfterPruning();
+		}
+		
+	}
+	public List<String> makegroup(int index){
+		List<String> l=new ArrayList<String>();
+		if(index==2){
+			for(int i=0;i<samples.length;i++){
+				Record r=samples[i];
+				for(int left=0;left<r.buy.length-1;left++){
+					for(int right=left+1;right<r.buy.length;right++){
+						String temp=r.buy[left]+","+r.buy[right];
+						if(!l.contains(temp)){
+							l.add(temp);
+						}
+					}
+				}
+			}
+		}else if(index==3){
+			for(int i=0;i<samples.length;i++){
+				Record r=samples[i];
+				if(r.buy.length>=3){
+					for(int left=0;left<r.buy.length-2;left++){
+						for(int middle=left+1;middle<r.buy.length-1;middle++){
+							for(int right=middle+1;right<r.buy.length;right++){
+								String temp=r.buy[left]+","+r.buy[middle]+","+r.buy[right];
+								if(!l.contains(temp)){
+									l.add(temp);
+								}
+							}				
+						}
+					}
+				}	
+			}
+		}
+		return l;
+	}
+	
+	public void outAfterPruning(){
+		System.out.println("after pruning:");
+		for(int s=0;s<this.subsamples.size();s++){
+			String temp=this.subsamples.get(s);
+			if(!this.notin.contains(temp)){
+				System.out.println(temp);
+			}	
+		}
+	}
+	
+	public void outCandidate(){
+		System.out.println("candidate set:");
+		for(int s=0;s<this.subsamples.size();s++){
+			String temp=this.subsamples.get(s);
+			System.out.println(temp+":"+getnum(temp));
+			if(getnum(temp)<2){
+				this.notin.add(temp);
+			}
+		}
+	}
+	
+	public int getnum(String s){
+		int count=0;
+		if(s.length()==2){
+			for(int i=0;i<samples.length;i++){
+				for(int j=0;j<samples[i].buy.length;j++){
+					if(samples[i].buy[j].equals(s)){
+						count++;
+					}
+				}			
+			}
+		}else{
+			String[] sub=s.split(",");
+			count=getCount(sub);	
+		}
+		
+		return count;
+	}
+	
+	public int getCount(String[] sub){
+		boolean nothas = false;
+		int count=0;
+		
+		for(int i=0;i<samples.length;i++){
+			String temp="";
+			for(int j=0;j<samples[i].buy.length;j++){
+				temp+=samples[i].buy[j];
+			}
+			
+			for(int m=0;m<sub.length;m++){
+				if(temp.indexOf(sub[m])==-1){
+					nothas=true;
+					break;
+				}
+			}
+					
+			if(!nothas){
+				count++;
+			}
+			nothas=false;
+		}
+		return count;
+	}
+
+	public static void main(String[] args) {
+		Apriori a=new Apriori();
+		a.doApriori();
+	}
+	
+	public int getmaxlength(){
+		int maxlength=0;
+		for(int i=0;i<this.samples.length;i++){
+			if(this.samples[i].buy.length>maxlength){
+				maxlength=this.samples[i].buy.length;
+			}
+		}
+		return maxlength;
+	}
+}
+class Record{
+	String[] buy;
+}

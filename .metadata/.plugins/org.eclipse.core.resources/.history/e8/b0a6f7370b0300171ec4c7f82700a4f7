@@ -1,0 +1,43 @@
+package Á´±í;
+
+public class Linklist 
+{
+	Node first;
+	Node last;
+	int size;
+	
+	public void additem(Object e)
+	{
+		Node node=new Node();
+		if(first==null)
+		{
+			
+			first=node;
+			last=node;
+			node.data=e;
+			node.next=null;
+			node.previous=null;
+		}
+		else{
+			
+			node.setPrevious(last);
+			node.setData(e);
+			node.setNext(null);
+			
+			last.setNext(node);
+			last=node;
+		}
+		size++;
+	}
+	public int getsize()
+	{
+		return size;
+	}
+
+	public static void main(String[] args)
+	{
+		Linklist l=new Linklist();
+		l.additem("aaa");
+		l.additem("bbb");
+	}
+}

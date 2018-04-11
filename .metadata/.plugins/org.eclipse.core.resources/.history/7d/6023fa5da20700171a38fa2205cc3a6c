@@ -1,0 +1,37 @@
+/*package special; //被唾弃的火力类
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+
+import toolbag.Gameimage;
+
+public class Fireobject 
+{
+	/*boolean isinframe=true;
+	double x,y;
+	double speed=6;
+	Image fireone;
+	public Fireobject(){}
+	
+	public Fireobject(String path,double x,double y)
+	{
+		this.x=x;
+		this.y=y;
+		fireone=Gameimage.getimage(path);
+	}
+
+	public void drawfireobject(Graphics g)
+	{
+		if(isinframe)
+		{
+		g.drawImage(fireone, (int)x	, (int)y, null);
+		y+=speed;
+		}
+	}
+	public Rectangle collision()
+	{
+		return(new Rectangle((int)x,(int)y,fireone.getWidth(null),fireone.getHeight(null)));
+	}
+
+}*/

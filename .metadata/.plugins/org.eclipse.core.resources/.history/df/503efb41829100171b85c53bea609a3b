@@ -1,0 +1,20 @@
+
+public class HannuoTest {
+
+	public void HannuoMethod(int level,char a,char b, char c){
+		if(level==1){
+			System.out.println(a+"-->"+c);
+		}else{
+			HannuoMethod(level-1,'A','C','B');
+			HannuoMethod(1,'A','B','C');
+			HannuoMethod(level-1,'B','A','C');
+		}
+	}
+
+		public static void main(String[] aaa){
+			HannuoTest h=new HannuoTest();
+			h.HannuoMethod(3, 'A', 'B', 'C');
+		
+		}
+	
+}

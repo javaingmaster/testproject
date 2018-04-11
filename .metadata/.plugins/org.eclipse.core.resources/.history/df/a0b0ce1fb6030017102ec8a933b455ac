@@ -1,0 +1,60 @@
+package test;
+
+public class Threadtest
+{
+	public static void main(String[] args)
+	{
+		Study s=new Study();
+		Studytwo two=new Studytwo();
+		
+		new Thread(s).start();
+		new Thread(two).start();
+		for(int i=0;i<100;i++)
+		{
+			if(i==50)
+			{
+				s.stop();
+			}
+		}
+	}
+
+}
+
+class Study implements Runnable
+{
+	boolean flag=true;
+	int m=0;
+	public void run()
+	{
+		while(flag)
+		{
+			System.out.println("*******"+m+"******");
+			m++;
+		}
+		
+	}
+	public void stop()
+	{		
+		this.flag=false;
+	}
+	
+}
+class Studytwo implements Runnable
+{
+	boolean flag=true;
+	int m=0;
+	public void run()
+	{
+		while(flag)
+		{
+			System.out.println("------"+m+"-------");
+			m++;
+		}
+		
+	}
+	public void stop()
+	{		
+		this.flag=false;
+	}
+	
+}

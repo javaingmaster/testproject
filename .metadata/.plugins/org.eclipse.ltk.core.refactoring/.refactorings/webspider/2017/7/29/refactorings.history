@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;webspider.GetConnetion.java&apos; to &apos;GetContent.java&apos;&#x0D;&#x0A;- Original project: &apos;webspider&apos;&#x0D;&#x0A;- Original element: &apos;webspider.GetConnetion.java&apos;&#x0D;&#x0A;- Renamed element: &apos;webspider.GetContent.java&apos;" description="Rename compilation unit &apos;GetConnetion.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;webspider{GetConnetion.java" name="GetContent.java" references="false" stamp="1500558428629" version="1.0"/>
+</session>

@@ -1,0 +1,163 @@
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+import test.Feature;
+
+public class Separate
+{
+	Feature[] character;
+	BufferedImage img;
+	BufferedImage[] sub;
+	int count,minx,miny,width,height,minx_,maxx_,miny_,maxy_,index=0;
+	int[][] pixel;
+	Separate(BufferedImage img,int count,int[][] pixel){
+		this.img=img;
+		 width = img.getWidth();  
+         height = img.getHeight();  
+         minx = img.getMinX();  
+         miny = img.getMinY(); 
+         this.count=count;
+         this.pixel=pixel;
+	}
+	public void separate(BufferedImage img)//不粘连图像分割
+	{			
+		    
+		   sub=new BufferedImage[count];//子图象容器	    
+		   String[] name=new String[count];
+		   String c0="1";
+		   for(int i=1;i<count;i++)
+		   {
+			   name[i-1]="image"+c0+".jpg";
+			   c0=c0+"1";
+		   }
+		   
+		   character=new  Feature[count];//特征值类
+		   for(int l=0;l<count;l++)
+		   {
+			   character[l]=new Feature();
+		   }
+		   
+		    for(int t=1;t<count;t++)
+		    {
+		    
+		    for(int i=minx;i<width;i++){
+				for(int j=miny;j<height;j++){
+				
+					if(pixel[i][j]==t)
+					{
+						Takewindowofarea(i,j);
+					}
+											
+				}
+			}
+			
+			sub[index]=img.getSubimage(minx_, miny_, maxx_-minx_+1, maxy_-miny_+1);
+			To_noisetosub(sub[index]);
+			
+			BufferedImage fillback=new BufferedImage(2*sub[index].getWidth(),2*sub[index].getHeight(),sub[index].getType());
+			int startwidth=sub[index].getWidth()/2;
+			int startheight=sub[index].getHeight()/2;
+			for(int i=fillback.getMinX();i<fillback.getWidth();i++)
+			{
+				for(int j=fillback.getMinY();j<fillback.getHeight();j++)
+				{
+					fillback.setRGB(i, j, 0xffffff);
+				}
+			}
+			for(int i=startwidth;i<startwidth+sub[index].getWidth();i++)
+			{
+				for(int j=startheight;j<startheight+sub[index].getHeight();j++)
+				{
+					fillback.setRGB(i, j,sub[index].getRGB(i-startwidth+sub[index].getMinX(), j-startheight+sub[index].getMinY()));
+				}
+			}
+			sub[index]=fillback;
+			rotateImage(sub[index]);
+			Image draw=sub[index].getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+			myimage[index]=draw;
+			sub[index]=toBufferedImage(draw);
+			
+			fill(sub[index]);
+			character[index].area16=divideinto16area(sub[index]);//16区域特征
+			character[index].minx=getminx(sub[index]);
+			character[index].maxx=getmaxx(sub[index]);
+			character[index].miny=getminy(sub[index]);
+			character[index].maxy=getmaxy(sub[index]);
+			
+			//System.out.println(character[index].miny);
+			//System.out.println(character[index].maxy);
+			//System.out.println(character[index].minx);
+			//System.out.println(character[index].maxx);
+			
+			character[index].rowfocus=getfocusnumber(sub[index],character[index].miny,character[index].maxy);
+			/*for(int p=0;p<8;p++)
+			{
+				System.out.println(character[index].rowfocus[p]);
+			}*/
+			
+			character[index].columnfocus=getfocusnumberv(sub[index],character[index].minx,character[index].maxx);
+			/*for(int p=0;p<8;p++)
+			{
+				System.out.println(character[index].columnfocus[p]);
+			}*/
+			
+			 character[index].up=getoutlinefromup(sub[index]);
+			 /*for(int p=0;p<80;p++)
+				{
+					System.out.println(character[index].up[p]);
+				}
+			 System.out.println("********************");*/
+			 character[index].down=getoutlinefromdown(sub[index]);
+			 character[index].left=getoutlinefromleft(sub[index]);
+			 character[index].right=getoutlinefromright(sub[index]);
+ 
+			//int newwidth=sub[index].getWidth();
+			//int newheight=sub[index].getHeight();
+			//System.out.println(name[index]);
+			String buff=name[index];		
+			File outImageFile=new File(buff);	
+			try {
+				ImageIO.write(sub[index], "jpeg", outImageFile);
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			/*try {
+				resizeimg(outImageFile,newwidth,newheight);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}*/
+			index++;
+			maxx_=0;
+			maxy_=0;
+			minx_=1000;
+			miny_=1000;		    
+		    }
+		 	    
+			int k=20;
+		    this.setLayout(null);
+		    
+		    
+		    for(int p=0;p<count-1;p++)//   验证不粘连图像分割
+		    {			    	
+		    ImageIcon c=new ImageIcon();
+			JLabel l=new JLabel();
+			//c.setImage(sub[p]);
+			c.setImage(myimage[p]);
+			l.setIcon(c);
+			this.add(l);
+			l.setBounds(k,50,250,250);
+			k+=90;			
+		    }
+		    
+		   exerecognize();
+		    		    
+	}
+
+}

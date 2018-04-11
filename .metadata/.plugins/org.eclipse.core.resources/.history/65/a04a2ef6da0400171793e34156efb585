@@ -1,0 +1,55 @@
+package GUI_tool;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Frame;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import java.awt.*; 
+import javax.swing.*; 
+public class CreateFrame extends JFrame
+{ 
+
+	//public CreateFrame(){}
+	public CreateFrame() 
+	{ 
+	setSize(300,200); 
+	MyPanel pl=new MyPanel(); 
+	Container contentPane=getContentPane(); 
+	contentPane.add(pl); 
+	pl. setOpaque(true); 
+	} 
+	
+	
+ public static void main(String args[]) 
+ { 
+	 CreateFrame f=new CreateFrame(); 
+    f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+    f.setVisible(true); 
+} 
+} 
+
+class MyPanel extends JPanel 
+{ 
+Image im; 
+public MyPanel() 
+{ 
+ im=Toolkit.getDefaultToolkit().getImage("D://background.jpg");
+ } 
+public void paintComponent(Graphics g) 
+{ 
+super.paintComponent(g); 
+int imWidth=im.getWidth(this); 
+int imHeight=im.getHeight(this); //定义图片的宽度、高度 
+int FWidth=getWidth(); 
+int FHeight=getHeight();//定义窗口的宽度、高度 
+int x=(FWidth-imWidth)/2; 
+int y=(FHeight-imHeight)/2;//计算图片的坐标,使图片显示在窗口正中间 
+g.drawImage(im,x,y,null);//绘制图片 
+ } 
+ }

@@ -1,0 +1,118 @@
+package special;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+
+import toolbag.Gameimage;
+
+public class Enemy extends Plane
+{
+	int life;
+	boolean ishasfire;
+
+	boolean isfireinframe=true;//为是否含有击毙奖励的属性
+	double firemovespeed=6;
+	Image fireone;
+	
+	public Enemy(){}
+	
+	public Enemy(Launchpoint l,String path,String s,int life,boolean ishasfire)
+	{
+		super();
+		this.life=life;
+		this.x=l.x;
+		this.y=l.y;
+		this.plane=Gameimage.getimage(path);
+		name=s;
+		this.live=true;
+		this.ishasfire=ishasfire;
+		fireone=Gameimage.getimage("images/fireobjectone");
+	}
+	
+	public void drawfireobject(Graphics g)
+	{
+		if(isfireinframe)
+		{
+		g.drawImage(fireone, (int)x	, (int)y, null);
+		y+=firemovespeed;
+		}
+	}
+	public Rectangle collision()
+	{
+		return(new Rectangle((int)x,(int)y,fireone.getWidth(null),fireone.getHeight(null)));
+	}
+	
+	public void drawmyself(Graphics g)
+	{
+		if(live)
+		{
+			if(name=="point")
+			{
+				Image im=plane.getScaledInstance(15, 15, Image.SCALE_DEFAULT);
+				plane=im;
+			}
+			
+			g.drawImage(plane,(int) x,(int) y, null);
+			//move();
+		}		
+	}
+	/*public void move()
+	{
+		if(left&&x>0){
+			x-=speed;
+		}
+		if(right&&x<490){
+			x+=speed;
+		}
+		if(up&&y>0){
+			y-=speed;
+		}
+		if(down&&y<740){
+			y+=speed;
+		}
+	}*/
+	public boolean iscollision(ArrayList<Myfire> myfirelist,Enemy it,Enemy point,Graphics g)//传容器  point参数方便回收
+	{
+		Myfire myfire;
+		/*for(int w=0;w<myfirelist.size();w++)                         //被注释代码与plane活力转换函数重复
+		{				
+		 myfire=myfirelist.get(w);	
+		 if(myfire.isinframe==false){  myfirelist.remove(w);}
+		 else{
+		 myfire.drawmyself(g);    }  		
+		}	*/
+		for(int j=0;j<myfirelist.size();j++)
+		{
+			 myfire=myfirelist.get(j);
+		  boolean isdeletemyfire=myfire.collision().intersects(point.collision());
+		 if(isdeletemyfire)
+         {        	
+       	   myfirelist.remove(j);
+       	   life--;
+           if(life==0)
+           {
+        	   it.setLive(false);
+        	   this.setLive(false);
+        	   if(it.ishasfire)
+        	   {       		  
+        		   this.drawfireobject(g);
+        	   }
+        	   it=null;
+        	   point=null;
+        	   return false;    	  
+           }
+ 		 }  
+		 
+		}
+		 return true;
+	}
+	public boolean isLive() {
+		return live;
+	}
+	public void setLive(boolean live) {
+		this.live = live;
+	}
+	
+}

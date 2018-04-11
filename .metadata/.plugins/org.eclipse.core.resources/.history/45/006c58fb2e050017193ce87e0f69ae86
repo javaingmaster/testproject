@@ -1,0 +1,54 @@
+package GUI_tool;
+
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+public class Test extends JPanel
+{
+	public void Myadd(Component c,GridBagConstraints ct,int x,int y,int width,int height)
+	{
+		ct.gridx=x;
+		ct.gridy=y;
+		ct.gridwidth=width;
+		ct.gridheight=height;
+		add(c,ct);
+	}
+	public void testt()
+	{
+		CreateFrame m=new CreateFrame("shit",700,500,"D://background.jpg",50,50);
+		JFrame now=new JFrame();
+		now=m.getframe();
+		
+		GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        now.setLayout(gridbag);
+        c.fill=GridBagConstraints.NONE;
+		c.anchor=GridBagConstraints.EAST;
+		c.weightx=3;
+		c.weighty=4;
+        
+        c.gridheight=2;
+        c.gridwidth=1;
+        JButton b1=new JButton("s");
+        gridbag.setConstraints(b1, c);
+        now.add(b1);
+		
+		/*JButton b1=new JButton("s");
+		Myadd(b1,c,100,50,50,50);
+		now.add(b1);*/
+		/*JLabel b=new JLabel("shit");
+		Myadd(b,c,250,250,30,30);
+		now.add(b);*/
+	}
+	public static void main(String args[]) 
+	 { 
+			new Test().testt();	
+	 } 
+}
